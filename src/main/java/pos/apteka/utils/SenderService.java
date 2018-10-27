@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import pos.apteka.model.Client;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -42,23 +43,25 @@ public class SenderService {
         javaMailSender.send(mail);
     }
 
-    public void htmlSend(String subject, String text, String to) throws MailException, MessagingException {
+    //    public void htmlSend(String subject, String text, String to) throws MailException, MessagingException {
+    public void htmlSend(String subject, String text, Client client) throws MailException, MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "utf-8");
-        mimeMessageHelper.setTo(to);
+//        mimeMessageHelper.setTo(to);
+        mimeMessageHelper.setTo(client.getEmail());
         mimeMessageHelper.setSubject(subject);
-        mimeMessage.setText(getFormattedMsg(text),null, "html");
+        mimeMessage.setText(getFormattedMsg(text, client), null, "html");
         javaMailSender.send(mimeMessage);
     }
 
-    private String getFormattedMsg(String text) {
+    private String getFormattedMsg(String text, Client client) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>").append("<body>");
 //        здравствуйте, уважаемый Иван Иванов!
 //Ваш ключ для продления подписки:
-        sb.append("<p>").append("Здравствуйте, уважаемый Иван Иванов!").append("</p>");
+        sb.append("<p>").append("Здравствуйте, уважаемый менеджер аптеки \"" + client.getName() + "\"!").append("</p>");
         sb.append("<p>").append("Ваш ключ для продления подписки: ");
-        sb.append("<b>").append(text).append("</b>").append("</p>");
+        sb.append("<br/><b>").append(text).append("</b>").append("</p>");
         sb.append("<p>").append("Cпасибо что выбирали нас!").append("</p>");
         sb.append("<p>").append("По дополнительным справкам обратитесь по телефону +998998899889").append("</p>");
         sb.append("<p>").append("С уважением ShamsWEB!").append("</p>");

@@ -1,6 +1,7 @@
 package pos.apteka.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import pos.apteka.model.Client;
 import pos.apteka.model.Extension;
@@ -38,6 +39,7 @@ public class ClientController {
         return extJpaRepository.findAllByClientId(id);
     }
 
+    @Transactional
     @PostMapping("/add")
     public Extension addNewClient(@RequestParam(value = "org") String name,
                                   @RequestParam(value = "phone") String phone,
@@ -59,7 +61,8 @@ public class ClientController {
             System.out.println("==== " + str);
 
             try {
-                senderService.htmlSend("HEX", str, client.getEmail());
+//                senderService.htmlSend("HEX", str, client.getEmail());
+                senderService.htmlSend("HEX", str, client);
                 ext.setFlag(1);
                 ext.setHexSha(str);
                 extJpaRepository.save(ext);
