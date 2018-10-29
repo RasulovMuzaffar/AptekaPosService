@@ -8,4 +8,5 @@ public interface ClientJpaRepository extends JpaRepository<Client, Long> {
 //    Client findByHexc(String hex);
 //
     Client findClientByHexc(String hex);
+    Client findClientByPhone(String phone);
 }

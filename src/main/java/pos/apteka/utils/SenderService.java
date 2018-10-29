@@ -1,19 +1,22 @@
 package pos.apteka.utils;
 
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import pos.apteka.model.Client;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 
 @Service
 public class SenderService {
+    final static String URL_TELEGA = "https://api.telegram.org/";
+    final static String TOKEN = "bot685836147:AAHQUsNeBoEDfX77ZXcK7N0QaNOqry5OFN4";
     private JavaMailSender javaMailSender;
 
     @Autowired
@@ -68,5 +71,26 @@ public class SenderService {
         sb.append("</body>").append("</html>");
 
         return sb.toString();
+    }
+
+    public void sendMessageToTelegram(Client client, String hash) {
+
+        OkHttpClient httpClient = new OkHttpClient();
+//https://api.telegram.org/bot<ТОКЕН>/sendMessage?chat_id=<ID_ЧАТА>&text=Hello%20World
+        HttpUrl.Builder httpBuider = HttpUrl.parse(URL_TELEGA + TOKEN + "/sendMessage").newBuilder();
+        httpBuider.addQueryParameter("chat_id", client.getChatId())
+                .addQueryParameter("parse_mode","markdown")
+                .addQueryParameter("text", " *Ваш серийний номер для активации продукта aptekaPOS:* \r\n" + hash);
+        String url = httpBuider.build().toString();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        try (Response response = httpClient.newCall(request).execute()) {
+            response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

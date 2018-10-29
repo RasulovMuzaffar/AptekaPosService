@@ -37,8 +37,11 @@ public class ExtController {
 
     @GetMapping("/extension")
     public String getLicense(@RequestParam(value = "p") String hex) {
+        System.out.println("1111 "+hex);
         Client client = clientJpaRepository.findClientByHexc(hex);
+        System.out.println("client "+client.getName());
         Extension ext = extJpaRepository.findExtByClientAndFlag0AndStatus0(client.getId());
+        System.out.println("EXT "+ext.getDays());
         if (client != null && ext != null) {
             String str = encriptionService.getModificationSHA512(client, ext);
             System.out.println("==== " + str);
@@ -46,6 +49,7 @@ public class ExtController {
 //            try {
 //                senderService.htmlSend("HEX", str, "rasulovmuzaffar@umail.uz");
 ////                senderService.htmlSend("HEX", str, "0999xc@mail.ru");
+            senderService.sendMessageToTelegram(client, str);
             ext.setFlag(1);
             ext.setHexSha(str);
             extJpaRepository.save(ext);

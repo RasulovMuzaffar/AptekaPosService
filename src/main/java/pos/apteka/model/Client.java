@@ -18,6 +18,8 @@ public class Client {
     private String email;
     private String phone;
     private String hexc;
+    @Column(name = "chat_id")
+    private String chatId;
 
     @JsonBackReference
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -27,11 +29,12 @@ public class Client {
     public Client() {
     }
 
-    public Client(String name, String email, String phone, String hexc, Set<Extension> ext) {
+    public Client(String name, String email, String phone, String hexc, String chatId, Set<Extension> ext) {
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.hexc = hexc;
+        this.chatId = chatId;
         this.ext = ext;
     }
 
@@ -73,6 +76,14 @@ public class Client {
 
     public void setHexc(String hexc) {
         this.hexc = hexc;
+    }
+
+    public String getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
     }
 
     public Set<Extension> getExt() {
